@@ -12,17 +12,8 @@ Game.prototype = {
         });
 
         // Light
-        this.setAmbientLight();
-        const lightPosition = [
-            [-20, 20, 0],
-            [0, 20, 0],
-            [20, 20, 0],
-        ];
-        const light = [];
-        lightPosition.forEach(position => {
-            const l = this.getLight(position);
-            light.push(l);
-        });
+        this.light = new Light();
+        this.light.init(game.app);
 
         this.table = new Table();
         this.table.init();
@@ -79,10 +70,6 @@ Game.prototype = {
         return new pcx.MiniStats(this.app);
     },
 
-    setAmbientLight() {
-        this.app.scene.ambientLight = new pc.Color(0.2, 0.2, 0.2);
-    },
-
     getCamera() {
         const camera = new pc.Entity();
         camera.addComponent("camera", {
@@ -91,19 +78,6 @@ Game.prototype = {
 
         this.app.root.addChild(camera);
         return camera;
-    },
-
-    getLight(position) {
-        const light = new pc.Entity();
-        light.addComponent("light", {
-            type: "omni",
-            range: 50,
-            castShadows: true,
-        });
-        light.setLocalPosition(position[0], position[1], position[2]);
-
-        this.app.root.addChild(light);
-        return light;
     },
 
     getModel(type) {
