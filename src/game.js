@@ -22,7 +22,7 @@ Game.prototype = {
         this.camera.init(game.app);
 
         this.ui = new UI();
-        this.ui.init();
+        this.ui.init(game.app);
 
         this.role = new Role();
         this.role.init();

@@ -1,16 +1,44 @@
 const UI = function() {
     this.state = "START"; // PLAY, PAUSE
+
+    UI.screenConfig = {
+        referenceResolution: new pc.Vec2(1280, 720),
+        scaleBlend: 0.5,
+        scaleMode: pc.SCALEMODE_BLEND,
+        screenSpace: true
+    };
+
+    UI.buttonConfig = {
+        anchor: [0.5, 0.5, 0.5, 0.5],
+        height: 80,
+        pivot: [0.5, 0.5],
+        type: pc.ELEMENTTYPE_IMAGE,
+        width: 350,
+        useInput: true
+    }
+
+    UI.labelConfig = {
+        anchor: [0.5, 0.5, 0.5, 0.5],
+        color: new pc.Color(0, 0, 0),
+        fontSize: 64,
+        height: 128,
+        pivot: [0.5, 0.5],
+        text: "",
+        type: pc.ELEMENTTYPE_TEXT,
+        width: 256,
+        wrapLines: true
+    };
 }
 
 UI.prototype = {
-    init() {
-        this.startScreen();
-        this.pauseScreen();
-        this.playScreen();
-        this.overScreen();
-        this.turnScrren();
+    init(app) {
+        this.startScreen(app);
+        this.pauseScreen(app);
+        this.playScreen(app);
+        this.overScreen(app);
+        this.turnScrren(app);
 
-        this.loadAsset();
+        this.loadAsset(app);
         this.handleKeyboard();
 
         this.newGame();
@@ -35,51 +63,14 @@ UI.prototype = {
         this.overMenu.enabled = this.state === "OVER";
     },
 
-    startScreen() {
-        const startMenu = new pc.Entity();
+    startScreen(app) {
+        const startMenu = this.getScreenComponent();
+        app.root.addChild(startMenu);
 
-        startMenu.addComponent("screen", {
-            referenceResolution: new pc.Vec2(1280, 720),
-            scaleBlend: 0.5,
-            scaleMode: pc.SCALEMODE_BLEND,
-            screenSpace: true
-        });
-        game.app.root.addChild(startMenu);
-
-        const playButton = new pc.Entity();
-        playButton.addComponent("button", {
-            imageEntity: playButton
-        });
-        playButton.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 0.5],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
-        game.app.assets.loadFromUrl("../assets/textures/triangle.png", "texture", (err, asset) => {
-            const material = new pc.StandardMaterial();
-            material.diffuseMap = asset.resource;
-            material.update();
-
-            // playButton.element.material = material;
-            // playButton.meshInstances[0].material = material;
-        });
+        const playButton = this.getButtonComponent();
         startMenu.addChild(playButton);
 
-        const playLabel = new pc.Entity();
-        playLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            color: new pc.Color(0, 0, 0),
-            fontSize: 64,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "PLAY",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
-        });
+        const playLabel = this.getLabelComponent({ text: "PLAY", });
         playButton.addChild(playLabel);
 
         this.startMenu = startMenu;
@@ -87,70 +78,20 @@ UI.prototype = {
         this.playLabel = playLabel;
     },
 
-    pauseScreen() {
-        const pauseMenu = new pc.Entity();
-        pauseMenu.addComponent("screen", {
-            referenceResolution: new pc.Vec2(1280, 720),
-            scaleBlend: 0.5,
-            scaleMode: pc.SCALEMODE_BLEND,
-            screenSpace: true
-        });
-        game.app.root.addChild(pauseMenu);
+    pauseScreen(app) {
+        const pauseMenu = this.getScreenComponent();
+        app.root.addChild(pauseMenu);
 
-        const continueButton = new pc.Entity();
-        continueButton.addComponent("button", {
-            imageEntity: continueButton
-        });
-        continueButton.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 0],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
+        const continueButton = this.getButtonComponent({ pivot: [0.5, 0], });
         pauseMenu.addChild(continueButton);
 
-        const continueLabel = new pc.Entity();
-        continueLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            color: new pc.Color(0, 0, 0),
-            fontSize: 64,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "CONTINUE",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
-        });
+        const continueLabel = this.getLabelComponent({ text: "CONTINUE", });
         continueButton.addChild(continueLabel);
 
-        const restartButton = new pc.Entity();
-        restartButton.addComponent("button", {
-            imageEntity: restartButton,
-        });
-        restartButton.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 1.5],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
+        const restartButton = this.getButtonComponent({ pivot: [0.5, 1.5], });
         pauseMenu.addChild(restartButton);
 
-        const restartLabel = new pc.Entity();
-        restartLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            color: new pc.Color(0, 0, 0),
-            fontSize: 64,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "RESTART",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
-        });
+        const restartLabel = this.getLabelComponent({ text: "RESTART", });
         restartButton.addChild(restartLabel);
 
         this.pauseMenu = pauseMenu;
@@ -160,29 +101,11 @@ UI.prototype = {
         this.restartLabel = restartLabel;
     },
 
-    playScreen() {
-        const playMenu = new pc.Entity();
+    playScreen(app) {
+        const playMenu = this.getScreenComponent();
+        app.root.addChild(playMenu);
 
-        playMenu.addComponent("screen", {
-            referenceResolution: new pc.Vec2(1280, 720),
-            scaleBlend: 0.5,
-            scaleMode: pc.SCALEMODE_BLEND,
-            screenSpace: true
-        });
-        game.app.root.addChild(playMenu);
-
-        const player1Button = new pc.Entity();
-        player1Button.addComponent("button", {
-            imageEntity: player1Button
-        });
-        player1Button.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 0.5],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
+        const player1Button = this.getButtonComponent();
         player1Button.setLocalPosition(
             (game.canvas.clientWidth - 350) / -2,
             (game.canvas.clientHeight - 80) / 2,
@@ -190,46 +113,20 @@ UI.prototype = {
         );
         playMenu.addChild(player1Button);
 
-        const player1NameLabel = new pc.Entity();
-        player1NameLabel.addComponent("element", {
+        const player1NameLabel = this.getLabelComponent({
             anchor: [0, 0.5, 0.7, 0.5],
-            color: new pc.Color(0, 0, 0),
             fontSize: 48,
-            height: 128,
-            pivot: [0.5, 0.5],
             text: "NGUYEN",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
         });
         player1Button.addChild(player1NameLabel);
 
-        const player1ScoreLabel = new pc.Entity();
-        player1ScoreLabel.addComponent("element", {
+        const player1ScoreLabel = this.getLabelComponent({
             anchor: [0.7, 0.5, 0.9, 0.5],
-            color: new pc.Color(0, 0, 0),
             fontSize: 48,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "0",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
         });
         player1Button.addChild(player1ScoreLabel);
 
-        const player2Button = new pc.Entity();
-        player2Button.addComponent("button", {
-            imageEntity: player2Button
-        });
-        player2Button.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 0.5],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
+        const player2Button = this.getButtonComponent();
         player2Button.setLocalPosition(
             (game.canvas.width - 350) / 2,
             (game.canvas.height - 80) / 2,
@@ -237,31 +134,17 @@ UI.prototype = {
         );
         playMenu.addChild(player2Button);
 
-        const player2NameLabel = new pc.Entity();
-        player2NameLabel.addComponent("element", {
+        const player2NameLabel = this.getLabelComponent({
             anchor: [0.2, 0.5, 0.9, 0.5],
-            color: new pc.Color(0, 0, 0),
             fontSize: 48,
-            height: 128,
-            pivot: [0.5, 0.5],
             text: "DAT",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
         });
         player2Button.addChild(player2NameLabel);
 
-        const player2ScoreLabel = new pc.Entity();
-        player2ScoreLabel.addComponent("element", {
+        const player2ScoreLabel = this.getLabelComponent({
             anchor: [0, 0.5, 0.2, 0.5],
-            color: new pc.Color(0, 0, 0),
             fontSize: 48,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "0",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
+
         });
         player2Button.addChild(player2ScoreLabel);
 
@@ -272,70 +155,20 @@ UI.prototype = {
         this.player2ScoreLabel = player2ScoreLabel;
     },
 
-    overScreen() {
-        const overMenu = new pc.Entity();
-        overMenu.addComponent("screen", {
-            referenceResolution: new pc.Vec2(1280, 720),
-            scaleBlend: 0.5,
-            scaleMode: pc.SCALEMODE_BLEND,
-            screenSpace: true
-        });
-        game.app.root.addChild(overMenu);
+    overScreen(app) {
+        const overMenu = this.getScreenComponent();
+        app.root.addChild(overMenu);
 
-        const backMenuButton = new pc.Entity();
-        backMenuButton.addComponent("button", {
-            imageEntity: backMenuButton
-        });
-        backMenuButton.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 0],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
+        const backMenuButton = this.getButtonComponent({ pivot: [0.5, 0], });
         overMenu.addChild(backMenuButton);
 
-        const backMenuLabel = new pc.Entity();
-        backMenuLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            color: new pc.Color(0, 0, 0),
-            fontSize: 64,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "BACK MENU",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
-        });
+        const backMenuLabel = this.getLabelComponent({ text: "BACK MENU", });
         backMenuButton.addChild(backMenuLabel);
 
-        const anotherMatchButton = new pc.Entity();
-        anotherMatchButton.addComponent("button", {
-            imageEntity: anotherMatchButton,
-        });
-        anotherMatchButton.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            height: 80,
-            pivot: [0.5, 1.5],
-            type: pc.ELEMENTTYPE_IMAGE,
-            width: 350,
-            useInput: true
-        });
+        const anotherMatchButton = this.getButtonComponent({ pivot: [0.5, 1.5], });
         overMenu.addChild(anotherMatchButton);
 
-        const anotherMatchLabel = new pc.Entity();
-        anotherMatchLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            color: new pc.Color(0, 0, 0),
-            fontSize: 64,
-            height: 128,
-            pivot: [0.5, 0.5],
-            text: "CONTINUE",
-            type: pc.ELEMENTTYPE_TEXT,
-            width: 256,
-            wrapLines: true
-        });
+        const anotherMatchLabel = this.getLabelComponent({ text: "CONTINUE", });
         anotherMatchButton.addChild(anotherMatchLabel);
 
         this.overMenu = overMenu;
@@ -345,42 +178,14 @@ UI.prototype = {
         this.anotherMatchLabel = anotherMatchLabel;
     },
 
-    turnScrren() {
-        const turnMenu = new pc.Entity();
-        turnMenu.addComponent("screen", {
-            referenceResolution: new pc.Vec2(1280, 720),
-            scaleBlend: 0.5,
-            scaleMode: pc.SCALEMODE_BLEND,
-            screenSpace: true,
-        });
-        game.app.root.addChild(turnMenu);
+    turnScrren(app) {
+        const turnMenu = this.getScreenComponent();
+        app.root.addChild(turnMenu);
 
-        const turnLabel = new pc.Entity();
-        turnLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            pivot: [0.5, 0],
-            width: 256,
-            height: 128,
-            fontSize: 64,
-            color: new pc.Color(0, 0, 0),
-            text: "TODO",
-            type: pc.ELEMENTTYPE_TEXT,
-            wrapLines: true,
-        });
+        const turnLabel = this.getLabelComponent({ pivot: [0.5, 0], });
         turnMenu.addChild(turnLabel);
 
-        const ballTypeLabel = new pc.Entity();
-        ballTypeLabel.addComponent("element", {
-            anchor: [0.5, 0.5, 0.5, 0.5],
-            pivot: [0.5, 1],
-            width: 256,
-            height: 128,
-            fontSize: 32,
-            color: new pc.Color(0, 0, 0),
-            text: "TODO",
-            type: pc.ELEMENTTYPE_TEXT,
-            wrapLines: true,
-        });
+        const ballTypeLabel = this.getLabelComponent({ pivot: [0.5, 1], fontSize: 32, });
         turnMenu.addChild(ballTypeLabel);
 
         this.turnMenu = turnMenu;
@@ -390,7 +195,7 @@ UI.prototype = {
         this.turnMenu.enabled = false;
     },
 
-    loadAsset() {
+    loadAsset(app) {
         const self = this;
 
         const fontAsset = new pc.Asset('courier.json', "font", {
@@ -409,8 +214,8 @@ UI.prototype = {
             self.turnLabel.element.fontAsset = fontAsset;
             self.ballTypeLabel.element.fontAsset = fontAsset;
         });
-        game.app.assets.add(fontAsset);
-        game.app.assets.load(fontAsset);
+        app.assets.add(fontAsset);
+        app.assets.load(fontAsset);
     },
 
     handleKeyboard() {
@@ -444,5 +249,41 @@ UI.prototype = {
 
             game.newGame();
         });
+    },
+
+    getScreenComponent(screenConfig) {
+        const config = {
+            ...UI.screenConfig,
+            ...screenConfig,
+        };
+
+        const screen = new pc.Entity();
+        screen.addComponent("screen", config);
+        return screen;
+    },
+
+    getButtonComponent(buttonConfig) {
+        const config = {
+            ...UI.buttonConfig,
+            ...buttonConfig,
+        };
+
+        const button = new pc.Entity();
+        button.addComponent("button", {
+            imageEntity: button
+        });
+        button.addComponent("element", config);
+        return button;
+    },
+
+    getLabelComponent(labelConfig) {
+        const config = {
+            ...UI.labelConfig,
+            ...labelConfig,
+        };
+
+        const label = new pc.Entity();
+        label.addComponent("element", config);
+        return label;
     }
 }
