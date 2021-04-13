@@ -377,7 +377,14 @@ Game.prototype = {
 
                 if (this.table.getCueState() === "IDLE") {
                     this.table.cue.rotateY(0);
-                    game.camera.moveTargetCamera(0, 0);
+
+                    if (this.camera.getCurrentState() !== "TARGET") {
+                        game.camera.followTargetCamera = false;
+                    }
+                    game.camera.moveTargetCamera(0, 0, game.camera.followTargetCamera);
+                    game.camera.followTargetCamera = false;
+                } else {
+                    game.camera.followTargetCamera = true;
                 }
             }
 

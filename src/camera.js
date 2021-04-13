@@ -205,7 +205,8 @@ Camera.prototype = {
         return camera;
     },
 
-    moveTargetCamera(dx, dy) {
+    moveTargetCamera(dx, dy, flyCamera) {
+        const preCamera = this.targetCamera.clone();
         const camera = this.targetCamera;
         if (!camera.z) camera.z = 0;
 
@@ -221,5 +222,13 @@ Camera.prototype = {
         camera.z += dy * TARGET_CAMERA_HORIZONTAL_SPEED;
         camera.z = pc.math.clamp(camera.z, 0, 20);
         camera.translateLocal(0, 0, 7 + camera.z);
+
+        // When the ball returns to IDLE state
+        if (flyCamera) {
+            this.setupSlidePath(
+                preCamera,
+                this.targetCamera,
+            );
+        }
     },
 }
