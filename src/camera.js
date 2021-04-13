@@ -207,7 +207,7 @@ Camera.prototype = {
 
     moveTargetCamera(dx, dy) {
         const camera = this.targetCamera;
-        if (!camera.y) camera.y = 0;
+        if (!camera.z) camera.z = 0;
 
         // Rotate new angle camera
         const ex = dx * TARGET_CAMERA_VERTICAL_SPEED;
