@@ -3,11 +3,11 @@ const Camera = function() {
 }
 
 Camera.prototype = {
-    init() {
-        this.flyCamera = game.getCamera();
-        this.targetCamera = game.getCamera();
-        this.lookDownCamera = game.getCamera();
-        this.flyingThroughCamera = game.getCamera();
+    init(app) {
+        this.flyCamera = this.setupCameraComponent(app);
+        this.targetCamera = this.setupCameraComponent(app);
+        this.lookDownCamera = this.setupCameraComponent(app);
+        this.flyingThroughCamera = this.setupCameraComponent(app);
     },
 
     newGame() {
@@ -190,4 +190,18 @@ Camera.prototype = {
                 break;
         }
     },
+
+    getCameraComponent() {
+        const camera = new pc.Entity();
+        camera.addComponent("camera", {
+            clearColor: new pc.Color(CAMERA_CLEAR_COLOR),
+        });
+        return camera;
+    },
+
+    setupCameraComponent(app) {
+        const camera = this.getCameraComponent();
+        app.root.addChild(camera);
+        return camera;
+    }
 }

@@ -19,7 +19,7 @@ Game.prototype = {
         this.table.init();
 
         this.camera = new Camera();
-        this.camera.init();
+        this.camera.init(game.app);
 
         this.ui = new UI();
         this.ui.init();
@@ -68,16 +68,6 @@ Game.prototype = {
 
     getMiniStatistics() {
         return new pcx.MiniStats(this.app);
-    },
-
-    getCamera() {
-        const camera = new pc.Entity();
-        camera.addComponent("camera", {
-            clearColor: new pc.Color(0.4, 0.6, 1),
-        });
-
-        this.app.root.addChild(camera);
-        return camera;
     },
 
     getModel(type) {
