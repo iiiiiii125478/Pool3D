@@ -423,7 +423,6 @@ UI.prototype = {
 
         self.continueButton.button.on('click', function(e) {
             self.state = "PLAY";
-            game.newGame();
         });
 
         self.restartButton.button.on('click', function(e) {
