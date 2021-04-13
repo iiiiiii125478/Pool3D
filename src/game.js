@@ -41,11 +41,6 @@ Game.prototype = {
 
     newGame() {
         this.camera.newGame();
-
-        const eulers = this.camera.flyCamera.getLocalEulerAngles();
-        this.ex = eulers.x;
-        this.ey = eulers.y;
-
         this.role.newGame();
         this.table.newGame();
     },
@@ -249,10 +244,11 @@ Game.prototype = {
                     //     case "FLY":
                     //         if (!pc.Mouse.isPointerLocked()) return;
 
-                    //         this.ex -= event.dy * 0.1;
-                    //         this.ex = pc.math.clamp(this.ex, -90, 10);
-                    //         this.ey -= event.dx * 0.1;
-                    //         this.camera.flyCamera.setLocalEulerAngles(this.ex, this.ey, 0);
+                    //         const camera = this.camera.flyCamera;
+                    //         camera.ex -= event.dy * 0.1;
+                    //         camera.ex = pc.math.clamp(camera.ex, -90, 10);
+                    //         camera.ey -= event.dx * 0.1;
+                    //         camera.setLocalEulerAngles(camera.ex, camera.ey, 0);
                     //         break;
                     //     case "TARGET":
                     //         if (!pc.Mouse.isPointerLocked() ||

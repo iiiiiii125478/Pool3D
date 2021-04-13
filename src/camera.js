@@ -22,6 +22,10 @@ Camera.prototype = {
         const position = new pc.Vec3([-20, 10, 0]);
         this.flyCamera.setLocalPosition(position);
         this.flyCamera.lookAt(0, 0, 0);
+
+        const eulers = this.flyCamera.getLocalEulerAngles();
+        this.flyCamera.ex = eulers.x;
+        this.flyCamera.ey = eulers.y;
     },
 
     setTargetCamera() {
