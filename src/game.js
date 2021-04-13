@@ -128,21 +128,6 @@ Game.prototype = {
         }
     },
 
-    moveCameraLock(dx, dy) {
-        const camera = this.camera.targetCamera;
-        if (!camera.y) camera.y = 0;
-
-        const ex = dx * TARGET_CAMERA_VERTICAL_SPEED;
-        camera.y += dy * TARGET_CAMERA_HORIZONTAL_SPEED;
-        camera.rotate(0, -ex, 0);
-
-        const origin = this.table.balls[0].ball.localPosition;
-        camera.setLocalPosition(origin.x, origin.y, origin.z);
-
-        camera.y = pc.math.clamp(camera.y, 0, 20);
-        camera.translateLocal(0, 0, 7 + camera.y);
-    },
-
     shoot() {
         const cue = this.table.cue;
         const whiteBall = this.table.balls[0];
@@ -202,7 +187,7 @@ Game.prototype = {
                         this.table.cue.impulse = 0;
                         this.table.cue.rotateY(-event.dx * TARGET_CAMERA_VERTICAL_SPEED);
                     }
-                    this.moveCameraLock(event.dx, event.dy);
+                    this.camera.moveTargetCamera(event.dx, event.dy);
 
                     // switch (this.camera.state) {
                     //     case "FLY":
@@ -224,7 +209,7 @@ Game.prototype = {
                     //             this.table.cue.rotateY(-event.dx * TARGET_CAMERA_VERTICAL_SPEED);
                     //         }
 
-                    //         this.moveCameraLock(event.dx, event.dy);
+                    //         this.camera.moveTargetCamera(event.dx, event.dy);
                     //         break;
                     // }
                 },
@@ -391,7 +376,7 @@ Game.prototype = {
 
                 if (this.table.getCueState() === "IDLE") {
                     this.table.cue.rotateY(0);
-                    this.moveCameraLock(0, 0);
+                    game.camera.moveTargetCamera(0, 0);
                 }
             }
 

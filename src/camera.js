@@ -203,5 +203,23 @@ Camera.prototype = {
         const camera = this.getCameraComponent();
         app.root.addChild(camera);
         return camera;
-    }
+    },
+
+    moveTargetCamera(dx, dy) {
+        const camera = this.targetCamera;
+        if (!camera.y) camera.y = 0;
+
+        // Rotate new angle camera
+        const ex = dx * TARGET_CAMERA_VERTICAL_SPEED;
+        camera.rotate(0, -ex, 0);
+
+        // Put position into white ball porition
+        const origin = game.table.balls[0].ball.localPosition;
+        camera.setLocalPosition(origin);
+
+        // Move back camera onto z-axis
+        camera.z += dy * TARGET_CAMERA_HORIZONTAL_SPEED;
+        camera.z = pc.math.clamp(camera.z, 0, 20);
+        camera.translateLocal(0, 0, 7 + camera.z);
+    },
 }
