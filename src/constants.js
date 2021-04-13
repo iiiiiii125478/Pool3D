@@ -39,3 +39,41 @@ POINT_LIGHT_POSITION = [
 POINT_LIGHT_RANGE = 50;
 
 CAMERA_CLEAR_COLOR = [0.4, 0.6, 1];
+
+TABLE_WIDTH = 40;
+TABLE_HEIGHT = 20;
+TABLE_DEPTH = 1;
+TABLE_COLOR = [0.1, 0.8, 0.2];
+
+TABLE_FRICTION = 0.3;
+TABLE_ROLLING_FRICTION = 0.4;
+
+WALL_POSITION = [
+    [20.5, 0, 0],
+    [-20.5, 0, 0],
+    [-10, 0, -10.5],
+    [10, 0, -10.5],
+    [-10, 0, 10.5],
+    [10, 0, 10.5],
+];
+
+WALL_ROTATE = [
+    [90, 0, 90],
+    [90, 0, 90],
+    [0, 0, 90],
+    [0, 0, 90],
+    [0, 0, 90],
+    [0, 0, 90],
+];
+
+WALL_SCALE = [
+    [1, 18, 1],
+    [1, 18, 1],
+    [1, 18, 1],
+    [1, 18, 1],
+    [1, 18, 1],
+    [1, 18, 1],
+];
+WALL_RESTITUTION = 0.5;
+WALL_FRICTION = 0.3;
+WALL_ROLLING_FRICTION = 0.4;

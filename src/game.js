@@ -108,7 +108,7 @@ Game.prototype = {
 
         const cuePos = this.table.cue.cue.getLocalPosition();
         const ballPos = this.table.balls[0].ball.getLocalPosition();
-        const direction = ballPos.clone().sub(cuePos.clone()).normalize();
+        const direction = new pc.Vec3().sub2(ballPos, cuePos).normalize();
 
         const start = direction.clone().mulScalar(0.5).add(ballPos);
         const end = direction.clone().mulScalar(40).add(ballPos);
@@ -331,15 +331,16 @@ Game.prototype = {
 
             const from = camera.camera.screenToWorld(event.x, event.y, camera.camera.nearClip);
             const to = camera.camera.screenToWorld(event.x, event.y, camera.camera.farClip);
+
             whiteBall.rigidbody.enabled = false;
             const result = this.app.systems.rigidbody.raycastFirst(from, to);
             whiteBall.rigidbody.enabled = true;
 
             if (result) {
                 whiteBall.rigidbody.teleport(new pc.Vec3([
-                    pc.math.clamp(result.point.x, -19.5, 19.5),
+                    pc.math.clamp(result.point.x, -19.5, 19.5), // (40 - 1) / 2
                     0,
-                    pc.math.clamp(result.point.z, -9.5, 9.5),
+                    pc.math.clamp(result.point.z, -9.5, 9.5), // (20 - 1) / 2
                 ]));
             }
         }

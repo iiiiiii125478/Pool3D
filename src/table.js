@@ -5,52 +5,61 @@ const Table = function() {
 
 Table.prototype = {
     init() {
-        // Table
-        this.table = game.getModel("box");
-        this.table.setLocalPosition(0, -1, 0);
-        this.table.setLocalScale(40, 1, 20);
+        this.setupTable();
+        this.setupWalls();
+        this.setupBalls();
 
-        this.table.addComponent("rigidbody", {
-            type: "static",
-            friction: 0.3,
-            rollingFriction: 0.4,
-        });
-        this.table.addComponent("collision", {
-            type: "box",
-            halfExtents: new pc.Vec3(20, 0.5, 10),
-        });
-
-        var material = new pc.StandardMaterial();
-        material.diffuse = new pc.Color(0.1, 0.8, 0.2);
-        material.update();
-        this.table.model.meshInstances[0].material = material;
-
-        // Wall
-        this.initWall(new pc.Vec3([20.5, 0, 0]), new pc.Vec3([90, 0, 90]), new pc.Vec3([1, 18, 1]));
-        this.initWall(new pc.Vec3([-20.5, 0, 0]), new pc.Vec3([90, 0, 90]), new pc.Vec3([1, 18, 1]));
-        this.initWall(new pc.Vec3([-10, 0, -10.5]), new pc.Vec3([0, 0, 90]), new pc.Vec3([1, 18, 1]));
-        this.initWall(new pc.Vec3([10, 0, -10.5]), new pc.Vec3([0, 0, 90]), new pc.Vec3([1, 18, 1]));
-        this.initWall(new pc.Vec3([-10, 0, 10.5]), new pc.Vec3([0, 0, 90]), new pc.Vec3([1, 18, 1]));
-        this.initWall(new pc.Vec3([10, 0, 10.5]), new pc.Vec3([0, 0, 90]), new pc.Vec3([1, 18, 1]));
-
-        // Balls
-        this.balls = [];
-        BALLS_POSITION.forEach((position, idx) => {
-            const ball = new Ball();
-            ball.init(position, idx);
-            this.balls.push(ball);
-        });
-
-        // Cue
         this.cue = new Cue();
         this.cue.init();
 
         this.newGame();
     },
 
+    setupTable() {
+        this.table = game.getModel("box");
+        this.table.setLocalPosition(0, -TABLE_DEPTH, 0);
+        this.table.setLocalScale(TABLE_WIDTH, TABLE_DEPTH, TABLE_HEIGHT);
+
+        this.table.addComponent("rigidbody", {
+            type: "static",
+            friction: TABLE_FRICTION,
+            rollingFriction: TABLE_ROLLING_FRICTION,
+        });
+        this.table.addComponent("collision", {
+            type: "box",
+            halfExtents: new pc.Vec3(TABLE_WIDTH / 2, TABLE_DEPTH / 2, TABLE_HEIGHT / 2),
+        });
+
+        var material = new pc.StandardMaterial();
+        material.diffuse = new pc.Color(TABLE_COLOR);
+        material.update();
+        this.table.model.meshInstances[0].material = material;
+    },
+
+    setupWalls() {
+        WALL_POSITION.forEach((position, idx) => {
+            const rotate = WALL_ROTATE[idx];
+            const scale = WALL_SCALE[idx];
+            this.initWall(
+                new pc.Vec3(position),
+                new pc.Vec3(rotate),
+                new pc.Vec3(scale),
+            );
+        });
+    },
+
+    setupBalls() {
+        this.balls = [];
+        BALLS_POSITION.forEach((position, idx) => {
+            const ball = new Ball();
+            ball.init(position, idx);
+            this.balls.push(ball);
+        });
+    },
+
     newGame() {
-        this.balls.forEach((ball, pos) => {
-            ball.newGame(BALLS_POSITION[pos]);
+        this.balls.forEach((ball, idx) => {
+            ball.newGame(BALLS_POSITION[idx]);
         });
         this.cue.newGame();
     },
@@ -59,12 +68,12 @@ Table.prototype = {
         const wall = game.getModel("box");
         wall.setLocalEulerAngles(rotate);
         wall.setLocalPosition(position);
-        wall.setLocalScale(scale)
+        wall.setLocalScale(scale);
         wall.addComponent("rigidbody", {
             type: "static",
-            restitution: 0.5,
-            friction: 0.3,
-            rollingFriction: 0.4,
+            restitution: WALL_RESTITUTION,
+            friction: WALL_FRICTION,
+            rollingFriction: WALL_ROLLING_FRICTION,
         });
         wall.addComponent("collision", {
             type: "box",
